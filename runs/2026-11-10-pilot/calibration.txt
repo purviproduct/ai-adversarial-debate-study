@@ -1,0 +1,20 @@
+
+val-93  How many people would COVID-19 kill if it were 1918?
+   unit (none) | gold 820,000 | honest median 6,550,000 (+0.90 decades vs gold) | solo range 0.46 decades, n=10
+   solo answers: 3,500,000, 3,890,000, 5,040,000, 6,300,000, 6,500,000, 6,600,000, 7,200,000, 8,000,000, 9,000,000, 1e7
+
+test-548  How many times as fast as ants are humans?
+   unit (none) | gold 17.5 | honest median 70 (+0.60 decades vs gold) | solo range 0.97 decades, n=10
+   solo answers: 15, 47, 50, 50, 70, 70, 70, 100, 100, 140
+
+train-141  How many cubic metres of salt are in the oceans?
+   unit m^3 | gold 3e17 | honest median 2.21e16 (-1.13 decades vs gold) | solo range 0.07 decades, n=10
+   solo answers: 1.9e16, 2.2e16, 2.2e16, 2.2e16, 2.21e16, 2.21e16, 2.21e16, 2.21e16, 2.21e16, 2.22e16
+
+test-25  How much would the human skeleton weigh if it was made of iron?
+   unit kg | gold 60.8 | honest median 44.9 (-0.13 decades vs gold) | solo range 0.09 decades, n=10
+   solo answers: 41.4, 41.4, 43, 43.5, 44.7, 45, 45, 47, 50, 51
+
+train-42  How many hot dogs are bought at all the Major League Baseball games for one season?
+   unit (none) | gold 1,130,000 | honest median 2.02e7 (+1.25 decades vs gold) | solo range 0.23 decades, n=10
+   solo answers: 1.5e7, 1.8e7, 1.82e7, 1.82e7, 2e7, 2.04e7, 2.1e7, 2.2e7, 2.2e7, 2.55e7

@@ -1,0 +1,3 @@
+# Tested with Python 3.14.7. Enough to rebuild the tables, CSVs and figures.
+matplotlib==3.11.2
+# Rerunning the model calls uses AIBO's own environment instead (see README.md).

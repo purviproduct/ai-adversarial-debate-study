@@ -1,0 +1,18 @@
+# Secrets: API keys live in a .env file that is never committed
+.env
+.env.*
+
+# RealFP is downloaded, not committed (its repository has no license)
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS
+.DS_Store
+
+# Logs written by AIBO when it is imported
+logs/
