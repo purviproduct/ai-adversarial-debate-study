@@ -106,13 +106,22 @@ The pilot cost $3.09 and ran in 551 seconds. All 840 answers parsed. The per-pro
 
 ## Next runs
 
-This pilot is the first run of a larger study. The next steps in my plan:
+This pilot is the first run of a larger study. The plan:
 
 1. 5 trials per cell instead of 2, with 10 rounds so the ÷100 and ×100 arms can finish.
-2. A skeptical honest agent.
-3. Two honest agents against one adversary.
+2. A second, larger model in both roles.
+3. A warned honest agent, told that some collaborators could be dishonest.
+4. More agents: 1, 2 or 3 honest agents against 1, 2 or 3 adversaries. The question is whether more honest agents resist better, or whether one convinced agent pulls the others along.
+5. Long debates with one adversary and 1, 2 or 3 honest agents, to see whether far goals fail or only take longer.
 
-Each new run gets its own dated folder under [runs/](runs/), with the same files as the pilot.
+None of these has results in this repo yet. Each new run gets its own dated folder under [runs/](runs/). How to add one is in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### Runs
+
+| Folder | Date | Who | What | Debates |
+|---|---|---|---|---|
+| [2026-11-10-smoke-test](runs/2026-11-10-smoke-test/) | 2026-11-10 | Purvi | 3-round test of the script before the pilot | 2 |
+| [2026-11-10-pilot](runs/2026-11-10-pilot/) | 2026-11-10 | Purvi | 1 honest vs 1 adversary, `gpt-5-mini`, 6 rounds, 7 arms | 70 |
 
 ## Sources and what is quoted here
 
@@ -182,6 +191,7 @@ for s in train val test; do curl -fsSL -o data/realfp/${s}_realfp.json https://r
 
 ```
 README.md
+CONTRIBUTING.md               how to add a run
 prompts.md                    every prompt, the adversary's instruction, every goal, the 5 problems
 requirements.txt
 src/adversarial_debate.py     the study: calibrate, run, analyze
