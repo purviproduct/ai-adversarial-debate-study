@@ -1,0 +1,14 @@
+A: 1 honest vs 1 adversary, 10 rounds   (adversarial_debate_run_20261123T040329Z.json)
+B: 2 honest vs 1 adversary, 10 rounds   (adversarial_debate_2h1a_run_20261123T051554Z.json)
+     arm   A captured   B captured  A |shift|  B |shift|
+   x0.01         8/10         4/10       1.67       0.86
+    x0.1        10/10         8/10       0.95       0.80
+  x0.333        10/10         8/10       0.48       0.37
+      x3        10/10         7/10       0.48       0.31
+     x10         7/10         4/10       0.83       0.49
+    x100         5/10         3/10       1.26       0.77
+     all        50/60        34/60       0.94       0.60
+goals below the honest median: A 28/30, B 20/30
+goals above: A 22/30, B 14/30
+captured, A vs B: Fisher exact p = 0.0025
+|shift| per debate, A vs B: Mann-Whitney p = 0.0002

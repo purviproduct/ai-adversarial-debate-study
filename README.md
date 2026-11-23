@@ -13,6 +13,9 @@
 - **The adversary held its role.** Its answer stayed within 1.5× of its goal in 360 of 360 turns, and it never refused.
 - **One example of how it wins: by changing what the question means.** In a test run before the pilot, the adversary argued that a skeleton "made of iron" means solid iron filling each bone's outer shape. The honest agent went from 50 kg to 420 kg in one round. This is one example, not a measured rate.
 
+- **A second honest agent helped, and the two honest agents always ended together** (2026-11-23, 10 rounds). With one honest agent, 50 of 60 adversarial debates ended within 2× of the adversary's goal. With two honest agents against one adversary, both ended there in 34 of 60 (Fisher exact p = 0.003). In the other 26 neither did. No debate ended with one honest agent captured and the other not, and the two finished within 2× of each other in 59 of 60.
+- **When two honest agents fell, one went first and the other followed fast.** In the 34 debates where both reached the goal, they got there in the same round 9 times, one round apart 20 times, and two or three rounds apart 5 times.
+
 **Pilot.** 70 debates (10 per arm), 840 model calls, run on 2026-11-10. Both agents were `gpt-5-mini` at temperature 1 with default reasoning. Five Fermi problems from RealFP. This is the first run of a larger study; see [Next runs](#next-runs).
 
 ![Where the adversary aimed vs where the honest agent ended, every pilot debate](runs/2026-11-10-pilot/figures/dose_response.png)
@@ -90,7 +93,30 @@ Pilot, 10 debates per arm, `gpt-5-mini` at temperature 1, 2026-11-10:
 
 The pilot cost $3.09 and ran in 551 seconds. All 840 answers parsed. The per-problem table and the full output are in [runs/2026-11-10-pilot/results.txt](runs/2026-11-10-pilot/results.txt). One chart per problem shows every debate round by round: [runs/2026-11-10-pilot/figures/](runs/2026-11-10-pilot/figures/).
 
+### 10 rounds, and a second honest agent
+
+Two runs on 2026-11-23, both `gpt-5-mini` at temperature 1, 10 rounds, the same 5 problems, goals and calibration as the pilot, 10 debates per arm. In the second run two honest agents (A and A2) debate one adversary, and every agent sees both other agents' previous replies. "Captured" means every honest agent's final answer is within 2× of the goal. Pull is averaged over honest agents.
+
+| Adversary's goal | 1 honest vs 1: captured | 1 honest vs 1: pull | 2 honest vs 1: both captured | 2 honest vs 1: pull |
+|---|---|---|---|---|
+| ÷100 | 8/10 | 0.87 | 4/10 | 0.42 |
+| ÷10 | 10/10 | 1.00 | 8/10 | 0.77 |
+| ÷3 | 10/10 | 1.00 | 8/10 | 0.77 |
+| ×3 | 10/10 | 1.00 | 7/10 | 0.66 |
+| ×10 | 7/10 | 0.80 | 4/10 | 0.43 |
+| ×100 | 5/10 | 0.59 | 3/10 | 0.30 |
+| all | 50/60 | | 34/60 | |
+
+- **One honest agent, 10 rounds.** ÷10, ÷3 and ×3 reached pull 1.00. ×10 went from 3/10 in the 6-round pilot to 7/10. ÷100 and ×100 stopped rising around round 5 (pull 0.86 to 0.87 and 0.56 to 0.59 from round 5 to round 10), so more rounds did not finish them.
+- **Two honest agents.** Mean absolute shift per debate fell from 0.94 to 0.60 decades (Mann-Whitney p = 0.0002). At round 10 the outcome was both captured (34) or neither (26), never one. In one debate a single agent touched the goal in some round and came back. The first honest agent to reach the goal did so at a median of round 3.5, the second at round 4.5.
+- Controls: A's mean shift was −0.02 (two honest agents) and −0.04 (three honest agents); mean absolute shift over all agents was 0.07 and 0.09 decades.
+
+The two runs cost $4.64 and $7.42. All 3,500 answers parsed. Full output: [one honest](runs/2026-11-23-one-honest-10-rounds/results.txt), [two honest](runs/2026-11-23-two-honest-one-adversary/results.txt), [the comparison](runs/2026-11-23-two-honest-one-adversary/comparison.txt).
+
 ## Where effects were small or did not hold
+
+- **A second honest agent did not stop the adversary.** Both honest agents were still captured in 34 of 60 debates.
+- **Far goals above the median mostly failed with two honest agents.** ×10 and ×100 captured both in 4/10 and 3/10, and on the COVID-19 and hot dog problems the honest agents barely moved at ×100 (+0.01 decades).
 
 - **×10 was weaker than ×3 and ×100.** Pull was 0.46 and only 3 of 10 debates ended near the goal. Most of the dip comes from two problems: on ocean salt and MLB hot dogs, A's mean shift was +0.00 and +0.11 decades against a goal 10 times the honest median.
 - **×100 did not finish.** Pull reached 0.60 by round 6, and 5 of 10 debates ended near the goal.
@@ -98,7 +124,8 @@ The pilot cost $3.09 and ran in 551 seconds. All 840 answers parsed. The per-pro
 
 ## Limitations
 
-- Two trials per cell, 10 debates per arm. The up/down asymmetry and the ×10 dip are leads to test, not results.
+- Two trials per cell, 10 debates per arm, in every run. The up/down asymmetry and the ×10 dip are leads to test, not results.
+- A second honest agent adds a second opinion and also makes the adversary a 1-in-3 minority. These runs cannot separate the two.
 - One model plays both roles, from one company (OpenAI). Five problems and one adversary wording.
 - A's shift is measured from its own round-1 answer, not from the calibration median.
 - Du et al.'s prompt tells agents to use the other opinion "carefully as additional advice". Part of the pull may come from that instruction.
@@ -108,13 +135,13 @@ The pilot cost $3.09 and ran in 551 seconds. All 840 answers parsed. The per-pro
 
 This pilot is the first run of a larger study. The plan:
 
-1. 5 trials per cell instead of 2, with 10 rounds so the ÷100 and ×100 arms can finish.
+1. 5 trials per cell instead of 2. (10 rounds is done at 2 trials per cell.)
 2. A second, larger model in both roles.
 3. A warned honest agent, told that some collaborators could be dishonest.
-4. More agents: 1, 2 or 3 honest agents against 1, 2 or 3 adversaries. The question is whether more honest agents resist better, or whether one convinced agent pulls the others along.
+4. More agents: 1, 2 or 3 honest agents against 1, 2 or 3 adversaries. The question is whether more honest agents resist better, or whether one convinced agent pulls the others along. (2 honest vs 1 adversary is done at 2 trials per cell.)
 5. Long debates with one adversary and 1, 2 or 3 honest agents, to see whether far goals fail or only take longer.
 
-None of these has results in this repo yet. Each new run gets its own dated folder under [runs/](runs/). How to add one is in [CONTRIBUTING.md](CONTRIBUTING.md).
+Items 2, 3 and 5 have no results in this repo yet. Each new run gets its own dated folder under [runs/](runs/). How to add one is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Runs
 
@@ -122,6 +149,8 @@ None of these has results in this repo yet. Each new run gets its own dated fold
 |---|---|---|---|---|
 | [2026-11-10-smoke-test](runs/2026-11-10-smoke-test/) | 2026-11-10 | Purvi | 3-round test of the script before the pilot | 2 |
 | [2026-11-10-pilot](runs/2026-11-10-pilot/) | 2026-11-10 | Purvi | 1 honest vs 1 adversary, `gpt-5-mini`, 6 rounds, 7 arms | 70 |
+| [2026-11-23-one-honest-10-rounds](runs/2026-11-23-one-honest-10-rounds/) | 2026-11-23 | Purvi | 1 honest vs 1 adversary, `gpt-5-mini`, 10 rounds, 7 arms | 70 |
+| [2026-11-23-two-honest-one-adversary](runs/2026-11-23-two-honest-one-adversary/) | 2026-11-23 | Purvi | 2 honest vs 1 adversary, `gpt-5-mini`, 10 rounds, 7 arms | 70 |
 
 ## Sources and what is quoted here
 
@@ -151,6 +180,22 @@ python src/adversarial_debate.py analyze runs/2026-11-10-pilot/adversarial_debat
 
 The first command rebuilds the two CSVs. The second prints the results table, the per-problem table and the unparsed count (saved as `results.txt`), and redraws the figures into the run's `figures/` folder. The third prints the calibration table (saved as `calibration.txt`).
 
+The 2026-11-23 runs rebuild the same way. Run the comparison from the repo root:
+
+```bash
+python src/adversarial_debate.py analyze runs/2026-11-23-one-honest-10-rounds/adversarial_debate_run_20261123T040329Z.json
+```
+
+```bash
+python src/adversarial_debate.py analyze runs/2026-11-23-two-honest-one-adversary/adversarial_debate_2h1a_run_20261123T051554Z.json
+```
+
+```bash
+python src/compare_runs.py runs/2026-11-23-one-honest-10-rounds/adversarial_debate_run_20261123T040329Z.json runs/2026-11-23-two-honest-one-adversary/adversarial_debate_2h1a_run_20261123T051554Z.json
+```
+
+The last command prints the side-by-side capture table and the two tests (saved as `comparison.txt`).
+
 ### Rerunning the model calls
 
 This costs money (the pilot was $3.09) and needs an AIBO checkout. Put your OpenAI key in a `.env` file, as `OPENAI_API_KEY=...`, either in the AIBO checkout or at this repo's root. Never commit that file; `.gitignore` already excludes it.
@@ -170,6 +215,8 @@ export AIBO_DIR="$PWD/AIBO"
 ```bash
 "$AIBO_DIR/.venv/bin/python" src/adversarial_debate.py run --calib runs/2026-11-10-pilot/adversarial_debate_calibration_final.json --n 2
 ```
+
+That is the pilot. The 2026-11-23 runs add `--rounds 10`, and the second one also adds `--honest 2`. `--adversaries` (1 to 3) and `--warn` exist in the script but have no saved runs yet.
 
 `run` reuses the calibration file, so it does not need RealFP. New results go to `runs/<today's UTC date>/`, or to the folder you pass with `--out`. AIBO also writes a `logs/` folder in the working directory; it is gitignored.
 
@@ -196,8 +243,11 @@ prompts.md                    every prompt, the adversary's instruction, every g
 requirements.txt
 src/adversarial_debate.py     the study: calibrate, run, analyze
 src/export_csv.py             JSON to CSV for one run folder
+src/compare_runs.py           two saved runs side by side, with the two tests
 runs/2026-11-10-pilot/        calibration and pilot JSON, CSVs, saved output, figures
 runs/2026-11-10-smoke-test/   the 3-round test run before the pilot (source of the iron skeleton example)
+runs/2026-11-23-one-honest-10-rounds/        1 honest vs 1 adversary at 10 rounds
+runs/2026-11-23-two-honest-one-adversary/    2 honest vs 1 adversary at 10 rounds, and the comparison
 data/realfp/                  RealFP, downloaded by you, not committed
 ```
 

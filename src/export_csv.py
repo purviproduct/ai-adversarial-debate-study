@@ -2,9 +2,10 @@
 
     python src/export_csv.py runs/2026-11-10-pilot
 
-adversarial_debate_run.csv          one row per debate, from every adversarial_debate_run_*.json in the folder:
-                                    problem, arm, trial, goal, both agents' answer each round, A's final shift,
-                                    A's pull each round, A within 2x of goal
+adversarial_debate_run.csv          one row per debate, from every adversarial_debate_*run_*.json in the folder:
+                                    problem, arm, trial, goal, every agent's answer each round, and for each
+                                    honest agent its final shift, pull each round, and within 2x of goal.
+                                    Honest agents are a, a2, a3; adversaries b, b2, b3 (b is honest in control).
 adversarial_debate_calibration.csv  one row per solo calibration answer, from every calibration file in the folder
 
 shift and pull use the study script's own shift() and pull(), so the CSV matches what analyze reports.
@@ -16,7 +17,7 @@ import json
 import math
 from pathlib import Path
 
-from adversarial_debate import pull, shift
+from adversarial_debate import honest_of, pull, shift
 
 
 def num(x):
@@ -30,21 +31,24 @@ def r4(x):
 
 def run_rows(folder: Path) -> list[dict]:
     rows = []
-    for path in sorted(folder.glob("adversarial_debate_run_*.json")):
+    for path in sorted(folder.glob("adversarial_debate_*run_*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
         rounds = data["meta"]["rounds"]
         last = rounds - 1
         for t in data["trials"]:
-            a, b = t["values"]["A"], t["values"]["B"]
             row = {"file": path.name, "problem_id": t["id"], "arm": t["arm"], "goal_multiplier": num(t["mult"]),
                    "trial": t["trial"], "realfp_gold": t["truth"], "honest_median": t["median"], "goal": num(t["goal"])}
-            row.update({f"a_r{k + 1}": num(a[k]) for k in range(rounds)})
-            row.update({f"b_r{k + 1}": num(b[k]) for k in range(rounds)})
-            row["a_shift_final_decades"] = r4(shift(t, last))
-            # pull = shift / log10(goal / A's round 1); blank for control, or when the goal is within ~1.4x of A's start
-            row.update({f"a_pull_r{k + 1}": r4(pull(t, k)) for k in range(1, rounds)})
-            within = "" if t["goal"] is None or not a[last] else int(abs(math.log10(a[last] / t["goal"])) <= math.log10(2))
-            row["a_final_within_2x_of_goal"] = within
+            for who, vals in t["values"].items():
+                row.update({f"{who.lower()}_r{k + 1}": num(vals[k]) for k in range(rounds)})
+            # measured agents: A in the two-agent runs, every honest agent when there are several
+            measured = ["A"] if len(t["values"]) == 2 else [w for w in t["values"] if w in honest_of(t) and w.startswith("A")]
+            for who in measured:
+                a, w = t["values"][who], who.lower()
+                row[f"{w}_shift_final_decades"] = r4(shift(t, last, who))
+                # pull = shift / log10(goal / own round 1); blank for control, or when the goal is within ~1.4x of the start
+                row.update({f"{w}_pull_r{k + 1}": r4(pull(t, k, who)) for k in range(1, rounds)})
+                within = "" if t["goal"] is None or not a[last] else int(abs(math.log10(a[last] / t["goal"])) <= math.log10(2))
+                row[f"{w}_final_within_2x_of_goal"] = within
             row["cost_usd"] = t["cost"]
             rows.append(row)
     return rows
